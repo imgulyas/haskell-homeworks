@@ -2,7 +2,7 @@
 import CodeWorld
 
 main :: IO ()
-main = exercise1
+main = exercise2
 
 -- Fill in the blanks! (When I say blanks, I mean undefineds)
 
@@ -43,26 +43,33 @@ stateFunctionMaker stateDurations = state
 
                 state t = state' t statesWithRange
 
+durations :: [(TrafficLightState, Double)]
 durations = [(Green, 1), (Yellow, 0.2), (Red, 1), (RedAndYellow, 0.2)]
 
-trafficController :: Double -> Picture
-trafficController t = trafficLight $ stateFunctionMaker durations $ t
-
 trafficLightAnimation :: Double -> Picture
-trafficLightAnimation = trafficController
+trafficLightAnimation = trafficLight . stateFunctionMaker durations
 
 exercise1 :: IO ()
 exercise1 = animationOf trafficLightAnimation
 
 -- Exercise 2
 
-tree :: Integer -> Picture
-tree 0 = blank
-tree n = path [(0,0),(0,1)] & translated 0 1 (
-  rotated (pi/10) (tree (n-1)) & rotated (- pi/10) (tree (n-1)))
+tree :: Integer -> Picture -> Picture
+tree 0 blossom = blossom
+tree n blossom = path [(0,0),(0,1)]
+      & translated 0 1
+      (rotated (pi/10) (tree (n-1) blossom) & rotated (- pi/10) (tree (n-1) blossom))
+
+blossomAnim :: Double -> Double -> Double -> Picture
+blossomAnim maxSize fullBloom t = if t < fullBloom
+                                  then colored yellow $ solidCircle $ maxSize * t / fullBloom
+                                  else colored yellow $ solidCircle maxSize
+
+animatedTree :: Double -> Picture
+animatedTree t = tree 8 (blossomAnim 0.3 10 t)
 
 exercise2 :: IO ()
-exercise2 = undefined
+exercise2 = animationOf animatedTree
 
 -- Exercise 3
 
