@@ -2,7 +2,7 @@
 import CodeWorld
 
 main :: IO ()
-main = exercise2
+main = exercise3
 
 -- Fill in the blanks! (When I say blanks, I mean undefineds)
 
@@ -73,21 +73,39 @@ exercise2 = animationOf animatedTree
 
 -- Exercise 3
 
+tileSize :: Double
+tileSize = 0.7
+
 wall, ground, storage, box :: Picture
-wall =    undefined
-ground =  undefined
-storage = undefined
-box =     undefined
+wall =    colored black $ solidRectangle tileSize tileSize
+ground =  colored blue  $ solidRectangle tileSize tileSize
+storage = colored green $ solidRectangle tileSize tileSize
+box =     colored red   $ solidRectangle tileSize tileSize
 
 drawTile :: Integer -> Picture
-drawTile = undefined
-
+drawTile 1 = wall
+drawTile 2 = ground
+drawTile 3 = box
+drawTile 4 = storage
+drawTile 0 = blank
+drawTile _ = blank
 
 pictureOfMaze :: Picture
-pictureOfMaze = undefined
+pictureOfMaze = concatPictures $ map
+                (\(x, y) ->
+                  translated (fromIntegral x * tileSize) (fromIntegral y * tileSize)
+                    $ drawTile $ maze x y)
+                                coordinates
+        where
+          coordinates = [(x,y) | x<- [(-10), (-9) .. 10], y <- [(-10), (-9) .. 10]]
+
+          concatPictures :: [Picture] -> Picture
+          concatPictures []     = blank
+          concatPictures [p]    = p
+          concatPictures (p:ps) = p & concatPictures ps
 
 exercise3 :: IO ()
-exercise3 = undefined
+exercise3 = drawingOf pictureOfMaze
 
 maze :: Integer -> Integer -> Integer
 maze x y
