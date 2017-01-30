@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -fno-warn-warnings-deprecations -fno-warn-unused-binds #-}
 import CodeWorld
 
-main :: IO ()
+    main :: IO ()
 main = exercise3
 
 -- Fill in the blanks! (When I say blanks, I mean undefineds)
